@@ -1,0 +1,392 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Gift, Check, X, User, Heart, ExternalLink } from 'lucide-react';
+
+const FamilyWishlistApp = () => {
+  const [currentUser, setCurrentUser] = useState('');
+  const [familyMembers] = useState([
+    { id: 1, name: 'Tom', avatar: '💎' },
+    { id: 2, name: 'Cherney', avatar: '🍾' },
+    { id: 3, name: 'Kait', avatar: '🗺' },
+    { id: 4, name: 'Alex', avatar: '✈️' },
+    { id: 5, name: 'Corrie', avatar: '🥏' },
+    { id: 6, name: 'Matt', avatar: '🎸' },
+    { id: 7, name: 'Erin', avatar: '🪴' }
+  ]);
+  
+  const [wishlists, setWishlists] = useState({
+    1: [
+      { id: 1, item: 'Coffee grinder', link: 'https://amazon.com/coffee-grinder', size: '', color: '', notes: 'For morning coffee routine', purchased: false },
+      { id: 2, item: 'Book: The Seven Husbands of Evelyn Hugo', link: 'https://amazon.com/seven-husbands-book', size: '', color: '', notes: 'Paperback preferred', purchased: true }
+    ],
+    2: [
+      { id: 3, item: 'Essential oils set', link: 'https://amazon.com/essential-oils', size: '', color: '', notes: 'Lavender and eucalyptus preferred', purchased: false },
+      { id: 4, item: 'Cozy throw blanket', link: 'https://target.com/throw-blanket', size: 'Large', color: 'Gray or beige', notes: 'For living room couch', purchased: false }
+    ],
+    3: [
+      { id: 5, item: 'Skincare gift set', link: 'https://sephora.com/skincare-set', size: '', color: '', notes: 'For sensitive skin', purchased: false },
+      { id: 6, item: 'Workout leggings', link: 'https://lululemon.com/leggings', size: 'Medium', color: 'Black', notes: 'High-waisted style', purchased: true }
+    ],
+    4: [
+      { id: 7, item: 'Gaming headset', link: 'https://bestbuy.com/gaming-headset', size: '', color: 'Black or red', notes: 'Wireless preferred', purchased: false },
+      { id: 8, item: 'Board game', link: 'https://amazon.com/board-game', size: '', color: '', notes: 'Strategy games preferred', purchased: false }
+    ],
+    5: [
+      { id: 9, item: 'Candle making kit', link: 'https://etsy.com/candle-kit', size: 'Beginner', color: '', notes: 'Includes wicks and instructions', purchased: false },
+      { id: 10, item: 'Plant pot set', link: 'https://homedepot.com/plant-pots', size: 'Medium', color: 'Terracotta', notes: 'For indoor herbs', purchased: false }
+    ],
+    6: [
+      { id: 11, item: 'Tool organizer', link: 'https://lowes.com/tool-organizer', size: 'Large', color: 'Black', notes: 'For garage workbench', purchased: false },
+      { id: 12, item: 'Bluetooth speaker', link: 'https://bestbuy.com/bluetooth-speaker', size: 'Portable', color: '', notes: 'Waterproof for outdoor use', purchased: true }
+    ],
+    7: [
+      { id: 13, item: 'Yoga mat', link: 'https://target.com/yoga-mat', size: 'Standard', color: 'Purple or teal', notes: 'Extra thick for comfort', purchased: false },
+      { id: 14, item: 'Recipe book', link: 'https://amazon.com/recipe-book', size: '', color: '', notes: 'Vegetarian recipes preferred', purchased: false }
+    ]
+  });
+  
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [newItem, setNewItem] = useState({ item: '', link: '', size: '', color: '', notes: '' });
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [syncStatus, setSyncStatus] = useState('local');
+
+  useEffect(() => {
+    setSyncStatus('saved');
+    const timeout = setTimeout(() => setSyncStatus('local'), 2000);
+    return () => clearTimeout(timeout);
+  }, [wishlists]);
+
+  const addWishlistItem = () => {
+    if (!newItem.item || !selectedMember) return;
+    
+    const newId = Math.max(...Object.values(wishlists).flat().map(item => item.id)) + 1;
+    const updatedWishlists = {
+      ...wishlists,
+      [selectedMember.id]: [
+        ...(wishlists[selectedMember.id] || []),
+        {
+          id: newId,
+          item: newItem.item,
+          link: newItem.link || '',
+          size: newItem.size || '',
+          color: newItem.color || '',
+          notes: newItem.notes || '',
+          purchased: false
+        }
+      ]
+    };
+    
+    setWishlists(updatedWishlists);
+    setNewItem({ item: '', link: '', size: '', color: '', notes: '' });
+    setShowAddForm(false);
+  };
+
+  const togglePurchased = (memberId, itemId) => {
+    if (!currentUser) {
+      alert('Please select who you are first!');
+      return;
+    }
+
+    const updatedWishlists = {
+      ...wishlists,
+      [memberId]: wishlists[memberId].map(item => 
+        item.id === itemId 
+          ? { 
+              ...item, 
+              purchased: !item.purchased
+            }
+          : item
+      )
+    };
+    
+    setWishlists(updatedWishlists);
+  };
+
+  const removeItem = (memberId, itemId) => {
+    const updatedWishlists = {
+      ...wishlists,
+      [memberId]: wishlists[memberId].filter(item => item.id !== itemId)
+    };
+    setWishlists(updatedWishlists);
+  };
+
+  const oceanGradient = {
+    background: 'linear-gradient(to bottom right, #90C2E7, #4E8098)'
+  };
+
+  const primaryButton = {
+    backgroundColor: '#F08700',
+    color: 'white'
+  };
+
+  const selectedCard = {
+    backgroundColor: '#F08700',
+    borderColor: '#F08700',
+    color: 'white'
+  };
+
+  const unselectedCard = {
+    backgroundColor: 'white',
+    borderColor: '#90C2E7',
+    color: '#092327'
+  };
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={oceanGradient}>
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border-2" style={{borderColor: '#0B5351'}}>
+          <div className="text-center mb-6">
+            <Gift className="w-16 h-16 mx-auto mb-4" style={{color: '#F08700'}} />
+            <h1 className="text-3xl font-bold mb-2" style={{color: '#092327'}}>McConomy Family Wishlist</h1>
+            <p style={{color: '#0B5351'}}>Who are you?</p>
+          </div>
+          
+          <div className="space-y-3">
+            {familyMembers.map(member => (
+              <button
+                key={member.id}
+                onClick={() => setCurrentUser(member.name)}
+                className="w-full flex items-center p-4 rounded-xl transition-colors border-2 hover:shadow-md"
+                style={{backgroundColor: '#F8FFFE', borderColor: '#90C2E7'}}
+              >
+                <span className="text-3xl mr-4">{member.avatar}</span>
+                <span className="text-lg font-medium" style={{color: '#092327'}}>{member.name}</span>
+              </button>
+            ))}
+          </div>
+          
+          <div className="mt-6 p-4 rounded-lg text-sm" style={{backgroundColor: '#E6F7F7', color: '#0B5351'}}>
+            <strong>Demo Mode:</strong> Changes are saved locally during this session. For permanent storage and family sharing, use the Node.js backend provided.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen" style={oceanGradient}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border-2" style={{borderColor: '#0B5351'}}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Gift className="w-8 h-8 mr-3" style={{color: '#F08700'}} />
+              <h1 className="text-3xl font-bold" style={{color: '#092327'}}>McConomy Family Wishlist</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <div 
+                className="flex items-center px-3 py-1 rounded-full text-sm text-white"
+                style={{backgroundColor: syncStatus === 'saved' ? '#F08700' : '#4E8098'}}
+              >
+                <div className="w-2 h-2 rounded-full mr-2 bg-white opacity-70"></div>
+                {syncStatus === 'saved' ? 'Changes saved' : 'Local demo'}
+              </div>
+              <div className="flex items-center px-4 py-2 rounded-full" style={{backgroundColor: '#E6F7F7'}}>
+                <User className="w-5 h-5 mr-2" style={{color: '#0B5351'}} />
+                <span className="font-medium" style={{color: '#092327'}}>Welcome, {currentUser}!</span>
+                <button 
+                  onClick={() => setCurrentUser('')}
+                  className="ml-3 hover:opacity-70"
+                  style={{color: '#0B5351'}}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-8">
+          {familyMembers.map(member => (
+            <button
+              key={member.id}
+              onClick={() => setSelectedMember(selectedMember?.id === member.id ? null : member)}
+              className="p-6 rounded-2xl shadow-lg transition-all transform hover:scale-105 border-2"
+              style={selectedMember?.id === member.id ? selectedCard : unselectedCard}
+            >
+              <div className="text-center">
+                <div className="text-4xl mb-3">{member.avatar}</div>
+                <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
+                <div className="flex items-center justify-center">
+                  <Heart className="w-4 h-4 mr-1" />
+                  <span className="text-sm">
+                    {wishlists[member.id]?.length || 0} items
+                  </span>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {selectedMember && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2" style={{borderColor: '#0B5351'}}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold" style={{color: '#092327'}}>
+                {selectedMember.avatar} {selectedMember.name}'s Wishlist
+              </h2>
+              {selectedMember.name === currentUser && (
+                <button
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className="flex items-center px-4 py-2 rounded-lg transition-colors hover:opacity-90"
+                  style={primaryButton}
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add Item
+                </button>
+              )}
+            </div>
+
+            {showAddForm && selectedMember.name === currentUser && (
+              <div className="rounded-xl p-4 mb-6 border" style={{backgroundColor: '#F0F9F9', borderColor: '#90C2E7'}}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    placeholder="Gift item..."
+                    value={newItem.item}
+                    onChange={(e) => setNewItem({...newItem, item: e.target.value})}
+                    className="md:col-span-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                    style={{borderColor: '#90C2E7', color: '#092327'}}
+                  />
+                  <input
+                    type="url"
+                    placeholder="Purchase link (optional)"
+                    value={newItem.link}
+                    onChange={(e) => setNewItem({...newItem, link: e.target.value})}
+                    className="md:col-span-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                    style={{borderColor: '#90C2E7', color: '#092327'}}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Size (optional)"
+                    value={newItem.size}
+                    onChange={(e) => setNewItem({...newItem, size: e.target.value})}
+                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                    style={{borderColor: '#90C2E7', color: '#092327'}}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Color (optional)"
+                    value={newItem.color}
+                    onChange={(e) => setNewItem({...newItem, color: e.target.value})}
+                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                    style={{borderColor: '#90C2E7', color: '#092327'}}
+                  />
+                  <textarea
+                    placeholder="Notes (optional)"
+                    value={newItem.notes}
+                    onChange={(e) => setNewItem({...newItem, notes: e.target.value})}
+                    rows="2"
+                    className="md:col-span-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none"
+                    style={{borderColor: '#90C2E7', color: '#092327'}}
+                  />
+                  <button
+                    onClick={addWishlistItem}
+                    className="md:col-span-2 px-6 py-2 rounded-lg transition-colors hover:opacity-90"
+                    style={primaryButton}
+                  >
+                    Add Item
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              {(wishlists[selectedMember.id] || []).map(item => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between p-4 rounded-xl border-2 transition-colors hover:shadow-md"
+                  style={{
+                    borderColor: item.purchased ? '#F08700' : '#90C2E7',
+                    backgroundColor: item.purchased ? '#E6F7F7' : 'white'
+                  }}
+                >
+                  <div className="flex-1">
+                    <div className={`font-medium ${item.purchased ? 'line-through opacity-60' : ''}`} style={{color: '#092327'}}>
+                      {item.item}
+                    </div>
+                    <div className="text-sm space-y-1" style={{color: '#0B5351'}}>
+                      {item.link ? (
+                        <a 
+                          href={item.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center hover:opacity-70"
+                          style={{color: '#F08700'}}
+                        >
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          View item
+                        </a>
+                      ) : (
+                        <span style={{color: '#4E8098'}}>No link provided</span>
+                      )}
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        {item.size && (
+                          <span className="px-2 py-1 rounded text-white" style={{backgroundColor: '#0B5351'}}>
+                            Size: {item.size}
+                          </span>
+                        )}
+                        {item.color && (
+                          <span className="px-2 py-1 rounded text-white" style={{backgroundColor: '#F08700'}}>
+                            Color: {item.color}
+                          </span>
+                        )}
+                      </div>
+                      {item.notes && (
+                        <div className="italic text-sm mt-1" style={{color: '#0B5351'}}>
+                          "{item.notes}"
+                        </div>
+                      )}
+                      {item.purchased && (
+                        <span className="font-medium" style={{color: '#F08700'}}>
+                          • Already purchased
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 ml-4">
+                    {selectedMember.name !== currentUser && (
+                      <button
+                        onClick={() => togglePurchased(selectedMember.id, item.id)}
+                        className="flex items-center px-3 py-1 rounded-lg text-sm font-medium transition-colors text-white hover:opacity-90"
+                        style={{backgroundColor: item.purchased ? '#4E8098' : '#F08700'}}
+                      >
+                        <Check className="w-4 h-4 mr-1" />
+                        {item.purchased ? 'Purchased' : 'Mark Purchased'}
+                      </button>
+                    )}
+                    
+                    {selectedMember.name === currentUser && (
+                      <button
+                        onClick={() => removeItem(selectedMember.id, item.id)}
+                        className="p-1 hover:opacity-70"
+                        style={{color: '#0B5351'}}
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              
+              {(!wishlists[selectedMember.id] || wishlists[selectedMember.id].length === 0) && (
+                <div className="text-center py-8" style={{color: '#0B5351'}}>
+                  <Gift className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p>No items in wishlist yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!selectedMember && (
+          <div className="text-center py-12">
+            <Gift className="w-16 h-16 mx-auto mb-4" style={{color: '#4E8098'}} />
+            <h3 className="text-xl font-medium mb-2" style={{color: '#092327'}}>Select a family member</h3>
+            <p style={{color: '#0B5351'}}>Choose someone above to view their wishlist</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FamilyWishlistApp;
