@@ -18,11 +18,48 @@ const FamilyWishlistApp = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [familyCode, setFamilyCode] = useState("");
+  const [authError, setAuthError] = useState("");
 
-  // Fetch initial data from backend
+  const FAMILY_CODE = "McConomy2024"; // You can change this to whatever you want
+
+  // Check for stored authentication on app load
   useEffect(() => {
-    fetchData();
+    const storedAuth = localStorage.getItem("mcconomy-family-auth");
+    if (storedAuth === "authenticated") {
+      setIsAuthenticated(true);
+    } else {
+      setLoading(false);
+    }
   }, []);
+
+  // Fetch data when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
+
+  const handleFamilyCodeSubmit = (e) => {
+    e.preventDefault();
+    if (familyCode === FAMILY_CODE) {
+      setIsAuthenticated(true);
+      localStorage.setItem("mcconomy-family-auth", "authenticated");
+      setAuthError("");
+    } else {
+      setAuthError("Incorrect family code. Please try again.");
+      setFamilyCode("");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("mcconomy-family-auth");
+    setIsAuthenticated(false);
+    setCurrentUser("");
+    setSelectedMember(null);
+    setFamilyCode("");
+  };
 
   const fetchData = async () => {
     try {
@@ -201,6 +238,80 @@ const FamilyWishlistApp = () => {
     );
   }
 
+  // Family Code Authentication Screen
+  if (!isAuthenticated) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center p-4"
+        style={oceanGradient}
+      >
+        <div
+          className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border-2"
+          style={{ borderColor: "#0B5351" }}
+        >
+          <div className="text-center mb-6">
+            <Gift
+              className="w-16 h-16 mx-auto mb-4"
+              style={{ color: "#F08700" }}
+            />
+            <h1
+              className="text-3xl font-bold mb-2"
+              style={{ color: "#092327" }}
+            >
+              McConomy Family Wishlist
+            </h1>
+            <p style={{ color: "#0B5351" }}>
+              Enter the family code to continue
+            </p>
+          </div>
+
+          <form onSubmit={handleFamilyCodeSubmit} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                placeholder="Family Code"
+                value={familyCode}
+                onChange={(e) => setFamilyCode(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 text-center text-lg"
+                style={{
+                  borderColor: authError ? "#DC2626" : "#90C2E7",
+                  color: "#092327",
+                  focusRingColor: "#F08700",
+                }}
+                autoFocus
+              />
+              {authError && (
+                <p
+                  className="mt-2 text-sm text-center"
+                  style={{ color: "#DC2626" }}
+                >
+                  {authError}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full px-6 py-3 rounded-lg text-white font-medium transition-colors hover:opacity-90"
+              style={{ backgroundColor: "#F08700" }}
+            >
+              Enter Wishlist
+            </button>
+          </form>
+
+          <div
+            className="mt-6 p-4 rounded-lg text-sm text-center"
+            style={{ backgroundColor: "#E6F7F7", color: "#0B5351" }}
+          >
+            <strong>For McConomy Family Members Only</strong>
+            <br />
+            Please contact a family member if you need the access code.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser) {
     return (
       <div
@@ -263,8 +374,9 @@ const FamilyWishlistApp = () => {
             className="mt-6 p-4 rounded-lg text-sm"
             style={{ backgroundColor: "#E6F7F7", color: "#0B5351" }}
           >
-            <strong>Real-time Sharing:</strong> Changes sync automatically with
-            your family members!
+            <strong>🔒 Authenticated Family Access</strong>
+            <br />
+            Your wishlist data syncs in real-time with family members!
           </div>
         </div>
       </div>
@@ -333,6 +445,14 @@ const FamilyWishlistApp = () => {
                   style={{ color: "#0B5351" }}
                 >
                   <X className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="ml-2 text-xs px-2 py-1 rounded hover:opacity-70"
+                  style={{ color: "#0B5351", backgroundColor: "#D1E7DD" }}
+                  title="Logout"
+                >
+                  Logout
                 </button>
               </div>
             </div>
