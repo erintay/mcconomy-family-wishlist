@@ -278,14 +278,20 @@ const FamilyWishlistApp = () => {
           className="bg-white rounded-2xl shadow-lg p-6 mb-8 border-2"
           style={{ borderColor: "#0B5351" }}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <div className="flex flex-col space-y-4">
+            {/* Title Row */}
+            <div className="flex items-center justify-center">
               <Gift className="w-8 h-8 mr-3" style={{ color: "#F08700" }} />
-              <h1 className="text-3xl font-bold" style={{ color: "#092327" }}>
+              <h1
+                className="text-3xl font-bold text-center"
+                style={{ color: "#092327" }}
+              >
                 McConomy Family Wishlist
               </h1>
             </div>
-            <div className="flex items-center gap-4">
+
+            {/* Controls Row */}
+            <div className="flex items-center justify-center gap-4">
               {error && (
                 <div
                   className="text-sm px-3 py-1 rounded-full"
