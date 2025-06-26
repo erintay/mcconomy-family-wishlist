@@ -22,7 +22,7 @@ const FamilyWishlistApp = () => {
   const [familyCode, setFamilyCode] = useState("");
   const [authError, setAuthError] = useState("");
 
-  const FAMILY_CODE = "McConomy2024"; // You can change this to whatever you want
+  const FAMILY_CODE = "Cabcherney"; // You can change this to whatever you want
 
   // Check for stored authentication on app load
   useEffect(() => {
@@ -43,7 +43,7 @@ const FamilyWishlistApp = () => {
 
   const handleFamilyCodeSubmit = (e) => {
     e.preventDefault();
-    if (familyCode === FAMILY_CODE) {
+    if (familyCode.trim().toLowerCase() === FAMILY_CODE.toLowerCase()) {
       setIsAuthenticated(true);
       localStorage.setItem("mcconomy-family-auth", "authenticated");
       setAuthError("");
