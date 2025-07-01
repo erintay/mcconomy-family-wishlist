@@ -22,35 +22,14 @@ const initialData = {
     { id: 6, name: 'Matt', avatar: '🎸' },
     { id: 7, name: 'Erin', avatar: '🪴' }
   ],
-  wishlists: {
-    1: [
-      { id: 1, item: 'Coffee grinder', link: 'https://amazon.com/coffee-grinder', size: '', color: '', notes: 'For morning coffee routine', purchased: false },
-      { id: 2, item: 'Book: The Seven Husbands of Evelyn Hugo', link: 'https://amazon.com/seven-husbands-book', size: '', color: '', notes: 'Paperback preferred', purchased: true }
-    ],
-    2: [
-      { id: 3, item: 'Essential oils set', link: 'https://amazon.com/essential-oils', size: '', color: '', notes: 'Lavender and eucalyptus preferred', purchased: false },
-      { id: 4, item: 'Cozy throw blanket', link: 'https://target.com/throw-blanket', size: 'Large', color: 'Gray or beige', notes: 'For living room couch', purchased: false }
-    ],
-    3: [
-      { id: 5, item: 'Skincare gift set', link: 'https://sephora.com/skincare-set', size: '', color: '', notes: 'For sensitive skin', purchased: false },
-      { id: 6, item: 'Workout leggings', link: 'https://lululemon.com/leggings', size: 'Medium', color: 'Black', notes: 'High-waisted style', purchased: true }
-    ],
-    4: [
-      { id: 7, item: 'Gaming headset', link: 'https://bestbuy.com/gaming-headset', size: '', color: 'Black or red', notes: 'Wireless preferred', purchased: false },
-      { id: 8, item: 'Board game', link: 'https://amazon.com/board-game', size: '', color: '', notes: 'Strategy games preferred', purchased: false }
-    ],
-    5: [
-      { id: 9, item: 'Candle making kit', link: 'https://etsy.com/candle-kit', size: 'Beginner', color: '', notes: 'Includes wicks and instructions', purchased: false },
-      { id: 10, item: 'Plant pot set', link: 'https://homedepot.com/plant-pots', size: 'Medium', color: 'Terracotta', notes: 'For indoor herbs', purchased: false }
-    ],
-    6: [
-      { id: 11, item: 'Tool organizer', link: 'https://lowes.com/tool-organizer', size: 'Large', color: 'Black', notes: 'For garage workbench', purchased: false },
-      { id: 12, item: 'Bluetooth speaker', link: 'https://bestbuy.com/bluetooth-speaker', size: 'Portable', color: '', notes: 'Waterproof for outdoor use', purchased: true }
-    ],
-    7: [
-      { id: 13, item: 'Yoga mat', link: 'https://target.com/yoga-mat', size: 'Standard', color: 'Purple or teal', notes: 'Extra thick for comfort', purchased: false },
-      { id: 14, item: 'Recipe book', link: 'https://amazon.com/recipe-book', size: '', color: '', notes: 'Vegetarian recipes preferred', purchased: false }
-    ]
+    wishlists: {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+    7: []
   }
 };
 
